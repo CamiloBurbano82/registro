@@ -6,28 +6,26 @@ var app = new Vue({
         apellido: '',
         usuario: '',
         fechaNacimiento: '',
-        registros: [{
-            nombres: '',
-            apellidos: '',
-            nombreCompleto:'',
-            edad:'',
-            claveAleatoria:'',
-            usuarioV: '',
-        }]
+        registros: []
     },
     methods: {
 
         guardar() {
 
-            const filtro = this.registros.filter(item => item.usuario == this.usuario);
+            const filtro = this.registros.filter(item => item.usuarioV == this.usuario);
 
-            if (filtro == null) {
+            if (filtro.length != 0) {
                 alert('El usuario ' + this.usuario + ' existe');
             } else {
-                this.registros.push({ nombres: this.nombre, apellidos: this.apellido, nombreCompleto: this.nombre +' '+this.apellido })
+                let ed = this.calcularEdad(this.fechaNacimiento);
+                let pw = this.generarClave(this.nombre, this.apellido);
+
+                this.registros.push({ nombres: this.nombre, apellidos: this.apellido, nombreCompleto: this.nombre +' '+this.apellido, edad: ed, claveAleatoria: pw, usuarioV: this.usuario });
+
+                alert('Registro Exitoso!!!');
 
             }
-            console.log(this.registros);
+            //console.log(this.registros);
         },
 
         calcularEdad(fecha) {
@@ -43,20 +41,18 @@ var app = new Vue({
                 edad--
             }
             return edad;
-
         },
 
-        generarClave(no, ap){
-            let n = no[0];
-            let p = ap[1];
-            let cont;
+        generarClave(no, ap) {
+            let n = no[0] + no[no.length - 1];
+            let p = ap[0] + ap[ap.length - 1];
+            let cont = '';
 
-            for(let i; i<3; i++){
-                cont = Math.random()*(9 - 1) + 1;
+            for (let i = 0; i <= 3; i++) {
+                cont = cont + Math.floor(Math.random() * 9);
             }
 
-            return n+p+cont;
-
+            return n + p + cont;
 
         }
 
