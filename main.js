@@ -12,19 +12,35 @@ var app = new Vue({
 
         guardar() {
 
-            const filtro = this.registros.filter(item => item.usuarioV == this.usuario);
+            const val = this.validar();
 
-            if (filtro.length != 0) {
-                alert('El usuario ' + this.usuario + ' existe');
+            if (val) {
+                const filtro = this.registros.filter(item => item.usuario == this.usuario);
+                if (filtro.length == 0) {
+                    let ed = this.calcularEdad(this.fechaNacimiento);
+                    
+                    if (ed != 'error') {
+                        let pw = this.generarClave(this.nombre, this.apellido);
+
+                        this.registros.push({ nombres: this.nombre, apellidos: this.apellido, nombreCompleto: this.nombre + ' ' + this.apellido, edad: ed, claveAleatoria: pw, usuario: this.usuario });
+
+                        alert('Registro Exitoso!!!');
+                        this.limpiar();
+                    } else {
+                        alert('Error en la fecha ingresada');
+                    }
+
+
+                } else {
+                    alert('El usuario ' + this.usuario + ' existe');
+                }
             } else {
-                let ed = this.calcularEdad(this.fechaNacimiento);
-                let pw = this.generarClave(this.nombre, this.apellido);
-
-                this.registros.push({ nombres: this.nombre, apellidos: this.apellido, nombreCompleto: this.nombre +' '+this.apellido, edad: ed, claveAleatoria: pw, usuarioV: this.usuario });
-
-                alert('Registro Exitoso!!!');
-
+                alert('Todos los campos son obligatorios');
             }
+
+
+
+
             //console.log(this.registros);
         },
 
@@ -32,15 +48,19 @@ var app = new Vue({
 
             let hoy = new Date();
             let fechaNacimiento = new Date(fecha);
-            let edad = hoy.getFullYear() - fechaNacimiento.getFullYear()
-            let diferenciaMeses = hoy.getMonth() - fechaNacimiento.getMonth()
-            if (
-                diferenciaMeses < 0 ||
-                (diferenciaMeses === 0 && hoy.getDate() < fechaNacimiento.getDate())
-            ) {
-                edad--
+            let bandera = hoy > fechaNacimiento;
+
+            if (bandera == true) {
+                let edad = hoy.getFullYear() - fechaNacimiento.getFullYear()
+                let diferenciaMeses = hoy.getMonth() - fechaNacimiento.getMonth()
+                if (diferenciaMeses < 0 || (diferenciaMeses === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+                    edad--
+                }
+                return edad;
+            } else {
+                return 'error';
             }
-            return edad;
+
         },
 
         generarClave(no, ap) {
@@ -54,6 +74,21 @@ var app = new Vue({
 
             return n + p + cont;
 
+        },
+
+        validar() {
+            if (this.nombre == '' || this.apellido == '' || this.usuario == '' || this.fechaNacimiento == '') {
+                return false;
+            } else {
+                return true;
+            }
+        },
+
+        limpiar() {
+            this.nombre = '';
+            this.apellido = '';
+            this.usuario = '';
+            this.fechaNacimiento = '';
         }
 
     }

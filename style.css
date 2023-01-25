@@ -60,10 +60,10 @@ td {
     padding: 20px;
 }
 
-thead th,
+/* thead th,
 tfoot th {
     font-family: 'Rock Salt', cursive;
-}
+} */
 
 th {
     letter-spacing: 2px;
