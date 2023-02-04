@@ -8,6 +8,11 @@ var app = new Vue({
         fechaNacimiento: '',
         registros: []
     },
+    mounted() {
+        if (localStorage.getItem('registros')) {
+            this.registros = JSON.parse(localStorage.getItem('registros'));
+        }
+    },
     methods: {
 
         guardar() {
@@ -18,11 +23,15 @@ var app = new Vue({
                 const filtro = this.registros.filter(item => item.usuario == this.usuario);
                 if (filtro.length == 0) {
                     let ed = this.calcularEdad(this.fechaNacimiento);
-                    
+
                     if (ed != 'error') {
                         let pw = this.generarClave(this.nombre, this.apellido);
 
                         this.registros.push({ nombres: this.nombre, apellidos: this.apellido, nombreCompleto: this.nombre + ' ' + this.apellido, edad: ed, claveAleatoria: pw, usuario: this.usuario });
+
+                        // localStorage
+                        const parsed = JSON.stringify(this.registros);
+                        localStorage.setItem('registros', parsed);
 
                         alert('Registro Exitoso!!!');
                         this.limpiar();
